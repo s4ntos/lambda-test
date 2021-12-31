@@ -11,7 +11,7 @@ resource "aws_lambda_function" "test_lambda" {
   filename      = data.archive_file.infra_eventbridge.output_path
   function_name = "infra_eventbridge_payload"
   role          = aws_iam_role.lambda.arn
-  handler       = "lambda.handler"
+  handler       = "main.handler" # name of the filename main.py <file>.<function>
 
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
@@ -19,4 +19,6 @@ resource "aws_lambda_function" "test_lambda" {
   source_code_hash = filebase64sha256("${path.module}/tmp/infra-eventbridge.zip")
 
   runtime = "python3.6"
+
+  depends_on = [ data.archive_file.infra_eventbridge ]
 }

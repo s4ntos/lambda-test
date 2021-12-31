@@ -4,7 +4,7 @@ data "aws_iam_policy_document" "lambda" {
     principals {
       type        = "Service"
       identifiers =[
-        "lmbda.amazonaws.com"
+        "lambda.amazonaws.com"
       ]
     }
     actions = [
@@ -16,15 +16,25 @@ data "aws_iam_policy_document" "lambda" {
 
 data "aws_iam_policy_document" "lambda_logs" {
   statement {
-    sid = "generic"
+    sid = "logGroups"
     effect = "Allow"
     actions = [
         "logs:CreateLogGroup",
+        ]
+    resources = [
+      "arn:aws:logs:eu-central-1:975183260419:log-group:/aws/lambda/${aws_lambda_function.test_lambda.function_name}",
+    ]
+  }
+  statement {
+    sid = "logStreams"
+    effect = "Allow"
+    actions = [
         "logs:CreateLogStream",
         "logs:PutLogEvents"
         ]
     resources = [
-      aws_cloudwatch_log_group.infra_eventbridge.arn
+      "arn:aws:logs:eu-central-1:975183260419:log-group:/aws/lambda/${aws_lambda_function.test_lambda.function_name}",
+      "arn:aws:logs:*:*:log-group:/aws/lambda/${aws_lambda_function.test_lambda.function_name}:log-stream:*"
     ]
   }
  
